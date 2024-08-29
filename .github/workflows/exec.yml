@@ -20,6 +20,9 @@ jobs:
           sleep 5
         done
 
+    - name: Check Docker containers
+      run: docker ps -a
+
     - name: Run entrypoint.sh
       run: |
         chmod +x ./entrypoint.sh

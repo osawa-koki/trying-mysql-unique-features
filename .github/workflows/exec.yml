@@ -1,0 +1,50 @@
+name: exec
+
+on: [push]
+
+jobs:
+  exec:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Docker
+      run: |
+        docker compose build
+        docker compose up -d
+
+    - name: Wait for MySQL to be ready
+      run: |
+        max_attempts=30
+        attempt=0
+
+        until docker exec db mysqladmin ping -uroot -proot --silent | grep 'mysqld is alive'; do
+          echo 'Waiting for MySQL to be ready...'
+          sleep 1
+          attempt=$((attempt + 1))
+
+          if [ $attempt -ge $max_attempts ]; then
+            echo 'MySQL failed to become ready after $max_attempts attempts.'
+            exit 1
+          fi
+        done
+
+        echo 'MySQL is ready!'
+
+    - name: Check Docker containers
+      run: docker ps -a
+
+    - name: Configure MySQL user
+      run: |
+        docker exec db mysql -u root -proot -e "DROP USER IF EXISTS 'user'@'%';"
+        docker exec db mysql -u root -proot -e "CREATE USER 'user'@'%' IDENTIFIED BY 'password';"
+        docker exec db mysql -u root -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;"
+        docker exec db mysql -u root -proot -e "FLUSH PRIVILEGES;"
+
+    - name: Run entrypoint.sh
+      run: |
+        chmod +x ./entrypoint.sh
+        ./entrypoint.sh
+
+    - name: Check MySQL logs
+      run: docker logs db

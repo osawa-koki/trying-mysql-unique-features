@@ -8,11 +8,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Prepare environment
-      run: |
-        docker compose down
-        rm -rf db
-
     - name: Set up Docker
       run: |
         docker compose build

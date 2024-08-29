@@ -22,7 +22,7 @@ jobs:
       run: |
         until docker exec db mysqladmin ping -h localhost -u user -ppassword --silent; do
           echo "Waiting for MySQL to be ready..."
-          sleep 5
+          sleep 10
         done
 
     - name: Check Docker containers
@@ -30,9 +30,10 @@ jobs:
 
     - name: Configure MySQL user
       run: |
-        docker exec db mysql -u root -proot -e "DROP USER IF EXISTS 'user'@'localhost';"
-        docker exec db mysql -u root -proot -e "CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';"
-        docker exec db mysql -u root -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' WITH GRANT OPTION;"
+        docker exec db mysql -u root -proot -e "SELECT 1 + 1"
+        docker exec db mysql -u root -proot -e "DROP USER IF EXISTS 'user'@'%';"
+        docker exec db mysql -u root -proot -e "CREATE USER 'user'@'%' IDENTIFIED BY 'password';"
+        docker exec db mysql -u root -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;"
         docker exec db mysql -u root -proot -e "FLUSH PRIVILEGES;"
 
     - name: Run entrypoint.sh

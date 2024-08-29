@@ -1,0 +1,13 @@
+name: exec
+
+on: [ push ]
+
+jobs:
+  exec:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Docker
+      run: docker compose build && docker compose up -d
+    - name: Run
+      run: chmod +x ./entrypoint.sh && ./entrypoint.sh

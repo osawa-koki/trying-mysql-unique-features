@@ -1,6 +1,1 @@
 SELECT 1 + 1;
-
-CREATE TABLE IF NOT EXISTS test (
-  id INT PRIMARY KEY,
-  name TEXT
-);

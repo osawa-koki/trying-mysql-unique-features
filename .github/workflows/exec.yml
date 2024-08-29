@@ -23,7 +23,7 @@ jobs:
         max_attempts=10
         attempt=0
 
-        until docker exec db mysqladmin ping -uroot -proot --silent | grep 'mysqld is alivea'; do
+        until docker exec db mysqladmin ping -uroot -proot --silent | grep 'mysqld is alive'; do
           echo 'Waiting for MySQL to be ready...'
           sleep 1
           attempt=$((attempt + 1))

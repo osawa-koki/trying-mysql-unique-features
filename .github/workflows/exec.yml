@@ -37,3 +37,8 @@ jobs:
 
     - name: Check MySQL logs
       run: docker logs db
+
+    - name: Post run cleanup
+      run: |
+        docker compose down
+        rm -rf db

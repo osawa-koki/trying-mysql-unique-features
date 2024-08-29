@@ -34,3 +34,6 @@ jobs:
       run: |
         chmod +x ./entrypoint.sh
         ./entrypoint.sh
+
+    - name: Check MySQL logs
+      run: docker logs db

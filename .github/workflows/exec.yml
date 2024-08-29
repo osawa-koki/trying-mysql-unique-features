@@ -20,7 +20,7 @@ jobs:
 
     - name: Wait for MySQL to be ready
       run: |
-        until docker exec db mysqladmin ping -h localhost -u user -ppassword --silent; do
+        until docker exec db mysqladmin ping -uroot -proot --silent; do
           echo "Waiting for MySQL to be ready..."
           sleep 10
         done

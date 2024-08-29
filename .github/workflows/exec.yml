@@ -1,13 +1,26 @@
 name: exec
 
-on: [ push ]
+on: [push]
 
 jobs:
   exec:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
     - name: Set up Docker
-      run: docker compose build && docker compose up -d
-    - name: Run
-      run: chmod +x ./entrypoint.sh && ./entrypoint.sh
+      run: |
+        docker-compose build
+        docker-compose up -d
+
+    - name: Wait for MySQL to be ready
+      run: |
+        until docker exec db mysqladmin ping -uuser -ppassword --silent; do
+          echo "Waiting for MySQL to be ready..."
+          sleep 5
+        done
+
+    - name: Run entrypoint.sh
+      run: |
+        chmod +x ./entrypoint.sh
+        ./entrypoint.sh
